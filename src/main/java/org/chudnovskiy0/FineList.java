@@ -12,5 +12,4 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class FineList {
-    private List<FineData> fineDataList;
 }
