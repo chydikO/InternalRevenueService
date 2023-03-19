@@ -17,9 +17,10 @@ import java.util.*;
  */
 public class App {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final Map<City, User> users = new HashMap<>();
+    private static final Map<FiscalCode, UserData> users = new HashMap<>();
     private static final Set<City> cites = new HashSet<>();
     private static final String MENU_SEPARATOR = "-";
+    private static final FineData fineData = new FineData();
 
     public static void main(String[] args) {
         while (start() != Menu.values().length) ;
@@ -56,7 +57,6 @@ public class App {
     }
 
 
-
     private static void getByCode() {
         System.out.println(menuTitle(Menu.GET_BY_CODE.label));
 
@@ -90,39 +90,43 @@ public class App {
         } while (name.isBlank() && soname.isBlank());
         FIO fio = new FIO(name, soname);
 
-        // enter city
-        for (City value :cites) {
-            System.out.println(value.toString());
+        //TODO: if user have fine -> add or continue;
+        System.out.println("-=??? Добавить штрафы для нового пользователя ???=-");
+        System.out.println("-=??? Y - да, любая буква - НЕТ ???=-");
+        String answer;
+        UserData userData;
+        if (scanner.nextLine().equals("Y".toLowerCase())) {
+            Set<Fine> fineSet = new HashSet<>();
+            fineData.printAllFineData();
+            do {
+                System.out.println("введите статью штрафа");
+                String fineArticle = scanner.nextLine();
+                //TODO: проверка что код такой есть в справочнике
+                if(fineData.getData().containsKey(fineArticle)) {
+                    fineSet.add(new Fine(fineArticle, fineData.getFineByKey(fineArticle)));
+                } else {
+                    System.out.println("Код штрафа не найден");
+                }
+                System.out.println("Хотите продолжать вводить штрафы? Y - да");
+                answer = scanner.nextLine();
+            } while (answer.equals("Y".toLowerCase()));
+            userData = new UserData(fio, getCityFromUser(), fineSet);
+        } else {
+            userData = new UserData(fio, getCityFromUser(), new HashSet<>());
         }
-        City cityByIndex;
-        do {
-            System.out.print("Введите индекс города:\t");
-            final String cityIndex = scanner.nextLine().trim();
-            cityByIndex = cites.stream()
-                    .filter(city -> cityIndex.equals(Integer.toString(city.getValue())))
-                    .findAny()
-                    .orElse(null);
-        } while (cityByIndex == null);
-
-        User user = new User(fio, new HashSet<>());
-
-        //TODO: isUserPresent() by key and value
-
         try {
-            users.put(cityByIndex, user);
+            users.put(new FiscalCode(fio), userData);
         } catch (Exception e) {
             System.err.println(Arrays.toString(e.getStackTrace()));
         }
-
-        //TODO: if user have fine -> add or continue;
-
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.ADD_NEW_USER.label.length())));
     }
 
 
+    //Добавление новых штрафов для уже существующей записи.
     private static void UpdateRecord() {
         System.out.println(menuTitle(Menu.UPDATE_RECORD.label));
-
+        //TODO: по налоговому номеру взять user и добавить ему штраф
 
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.UPDATE_RECORD.label.length())));
     }
@@ -135,19 +139,14 @@ public class App {
 
     private static void printUsers() {
         System.out.println(menuTitle(Menu.PRINT_DATA.label));
-
-//        for(City city : users.keySet()) {
-//            System.out.println(users.get(city) + "->" + city.getValue() + " " + city.getLabel());
-//        }
-
-        for (Map.Entry<City, User> entry : users.entrySet()) {
-            System.out.println(entry.getKey() + "/");
+        for (Map.Entry<FiscalCode, UserData> entry : users.entrySet()) {
+            System.out.println("\tНалоговый номер: " + entry.getKey().getId());
             System.out.println(entry.getValue().getFio());
+            System.out.println(entry.getValue().getCity().toString());
             entry.getValue().printAllFineDataSet();
         }
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.PRINT_DATA.label.length())));
     }
-
 
     private static void exit() {
         System.out.println("-= Выход =-");
@@ -169,5 +168,41 @@ public class App {
         cites.add(new City("Львов", 79000));
         cites.add(new City("Николаев", 54001));
         cites.add(new City("Одесса", 65000));
+    }
+
+    private static City getCityFromUser() {
+        printCites();
+        City cityByIndex;
+        do {
+            System.out.print("Введите индекс города:\t");
+            final String cityIndex = scanner.nextLine().trim();
+            cityByIndex = cites.stream()
+                    .filter(city -> cityIndex.equals(Integer.toString(city.getValue())))
+                    .findAny()
+                    .orElse(null);
+        } while (cityByIndex == null);
+        return cityByIndex;
+    }
+
+    private static UserData getUserByFiscalCode(City city) {
+        UserData result = null;
+//        System.out.print("Введите налоговый код:\t");
+//        final int inputFiscalCode = scanner.nextInt();
+//        List<UserData> userDataFromDB = users.entrySet().stream()
+//                .filter(entry -> entry.getValue().getFiscalCode() == inputFiscalCode)
+//                .map(Map.Entry::getValue)
+//                .collect(Collectors.toList()); // or .toList() for Java 16+
+//
+//        if (userDataFromDB.isEmpty()) {
+//            System.err.println("No data found");
+//            //throw new SpecificException("No data found with the given details");
+//        }
+        return result;
+    }
+
+    private static void printCites() {
+        for (City value : cites) {
+            System.out.println(value.toString());
+        }
     }
 }

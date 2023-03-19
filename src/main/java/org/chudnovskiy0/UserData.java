@@ -14,18 +14,12 @@ import java.util.function.Consumer;
 @ToString
 @EqualsAndHashCode
 
-public class User {
+public class UserData {
     private FIO fio;
-    private final int fiscalCode;
-    private Set<FineData> fineDataSet;
+    private City city;
+    private Set<Fine> fineDataSet;
 
-    public User(FIO fio, HashSet<FineData> fineDataSet) {
-        this.fio = fio;
-        this.fiscalCode = generateUniqueId();
-        this.fineDataSet = fineDataSet;
-    }
-
-    public boolean addFine(FineData fine) {
+    public boolean addFine(Fine fine) {
         if (fineDataSet.add(fine)) {
             System.out.println(" Штраф " + fine + " добавлен ");
             return true;
@@ -45,15 +39,8 @@ public class User {
 
     public void printAllFineDataSet() {
         System.out.println(" $$$$$$ Список штрафов $$$$$$");
-        fineDataSet.stream().forEach((Consumer<? super FineData>) System.out::println);
+        fineDataSet.stream().forEach((Consumer<? super Fine>) System.out::println);
         System.out.println(" $$$$$$");
     }
 
-    private int generateUniqueId() {
-        UUID randomUUID = UUID.randomUUID();
-        String str = fio.getName() + fio.getSoname() + randomUUID;
-        int uid = str.hashCode();
-        str = Integer.toString(uid).replaceAll("-", "");
-        return Integer.parseInt(str);
-    }
 }
