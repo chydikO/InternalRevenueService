@@ -140,6 +140,11 @@ public class App {
 //            System.out.println(users.get(city) + "->" + city.getValue() + " " + city.getLabel());
 //        }
 
+        for (Map.Entry<City, User> entry : users.entrySet()) {
+            System.out.println(entry.getKey() + "/");
+            System.out.println(entry.getValue().getFio());
+            entry.getValue().printAllFineDataSet();
+        }
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.PRINT_DATA.label.length())));
     }
 
