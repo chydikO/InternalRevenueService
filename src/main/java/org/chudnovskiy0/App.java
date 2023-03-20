@@ -1,16 +1,17 @@
 package org.chudnovskiy0;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Реализовать базу данных налоговой инспекции по штрафам. Идентифицировать конкретного человека будет
  * его персональный идентификационный код. У одного человека может быть много штрафов.
  * Реализовать:
- * 1. Полная распечатка базы данных.
- * 2. Распечатка данных по конкретному коду.
+ * +1. Полная распечатка базы данных.
+ * +2. Распечатка данных по конкретному коду.
  * 3. Распечатка данных по конкретному типу штрафа.
  * 4. Распечатка данных по конкретному городу.
- * 5. Добавление нового человека с информацией о нем.
+ * +5. Добавление нового человека с информацией о нем.
  * 6. Добавление новых штрафов для уже существующей записи.
  * 7. Удаление штрафа.
  * 8. Замена информации о человеке и его штрафах.
@@ -39,7 +40,7 @@ public class App {
                 scanner.nextLine();  // Consume newline left-over
 
                 switch (option) {
-                    case 1 -> printUsers();
+                    case 1 -> printUsers(users);
                     case 2 -> getByCode();
                     case 3 -> getByFine();
                     case 4 -> getByCity();
@@ -71,6 +72,24 @@ public class App {
     private static void getByFine() {
         System.out.println(menuTitle(Menu.GET_BY_FINE.label));
 
+        Map<FiscalCode, UserData> usersWithFine;
+        fineData.printAllFineData();
+        String fineArticle = getFineArticle();
+
+        if(fineData.getData().containsKey(fineArticle)) {
+            usersWithFine = new HashMap<>();
+            for (Map.Entry<FiscalCode, UserData> entry : users.entrySet()) {
+                if (entry.getValue().getFineDataSet().stream().filter(e -> e.getId().equals(fineArticle))
+                        .findFirst()
+                        .orElse(null) != null) {
+                    usersWithFine.put(entry.getKey(), entry.getValue());
+                }
+            }
+            printUsers(usersWithFine);
+
+        } else {
+            System.out.println("Код штрафа не найден");
+        }
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.GET_BY_FINE.label.length())));
     }
 
@@ -103,8 +122,7 @@ public class App {
             Set<Fine> fineSet = new HashSet<>();
             fineData.printAllFineData();
             do {
-                System.out.println("введите статью штрафа");
-                String fineArticle = scanner.nextLine();
+                String fineArticle = getFineArticle();
                 //TODO: проверка что код такой есть в справочнике
                 if(fineData.getData().containsKey(fineArticle)) {
                     fineSet.add(new Fine(fineArticle, fineData.getFineByKey(fineArticle)));
@@ -126,6 +144,11 @@ public class App {
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.ADD_NEW_USER.label.length())));
     }
 
+    private static String getFineArticle() {
+        System.out.println("введите статью штрафа");
+        return scanner.nextLine();
+    }
+
 
     //Добавление новых штрафов для уже существующей записи.
     private static void UpdateRecord() {
@@ -141,7 +164,7 @@ public class App {
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.DELETE_FINE.label.length())));
     }
 
-    private static void printUsers() {
+    private static void printUsers(Map<FiscalCode, UserData> users) {
         System.out.println(menuTitle(Menu.PRINT_DATA.label));
         for (Map.Entry<FiscalCode, UserData> entry : users.entrySet()) {
             System.out.println("\tНалоговый номер: " + entry.getKey().getId());
@@ -190,6 +213,7 @@ public class App {
 
     private static UserData getUserByFiscalCode() {
         System.out.print("Введите налоговый код:\t");
+        //TODO: проверка на то что введено число, если нет - печать ошибки и выход
         final int inputFiscalCode = scanner.nextInt();
 
         Set<FiscalCode> fiscalCodeSet = users.keySet();
