@@ -59,7 +59,11 @@ public class App {
 
     private static void getByCode() {
         System.out.println(menuTitle(Menu.GET_BY_CODE.label));
-
+        UserData userData = getUserByFiscalCode();
+        if (userData != null) {
+            System.out.println(userData.toString());
+            userData.printAllFineDataSet();
+        }
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.GET_BY_CODE.label.length())));
     }
 
@@ -184,20 +188,23 @@ public class App {
         return cityByIndex;
     }
 
-    private static UserData getUserByFiscalCode(City city) {
-        UserData result = null;
-//        System.out.print("Введите налоговый код:\t");
-//        final int inputFiscalCode = scanner.nextInt();
-//        List<UserData> userDataFromDB = users.entrySet().stream()
-//                .filter(entry -> entry.getValue().getFiscalCode() == inputFiscalCode)
-//                .map(Map.Entry::getValue)
-//                .collect(Collectors.toList()); // or .toList() for Java 16+
-//
-//        if (userDataFromDB.isEmpty()) {
-//            System.err.println("No data found");
-//            //throw new SpecificException("No data found with the given details");
-//        }
-        return result;
+    private static UserData getUserByFiscalCode() {
+        System.out.print("Введите налоговый код:\t");
+        final int inputFiscalCode = scanner.nextInt();
+
+        Set<FiscalCode> fiscalCodeSet = users.keySet();
+        UserData userData = null;
+
+        FiscalCode fiscalCode = fiscalCodeSet.stream()
+                .filter(code -> code.getId() == inputFiscalCode)
+                .findFirst()
+                .orElse(null);
+        if (fiscalCode != null) {
+            userData = users.get(fiscalCode);
+        } else {
+            System.out.println("нет такого налогоплательщика");
+        }
+        return userData;
     }
 
     private static void printCites() {
@@ -206,3 +213,21 @@ public class App {
         }
     }
 }
+
+/*
+List<UserData> userDataFromDB = users.entrySet().stream()
+                .filter(entry -> entry.getValue().getFineDataSet() == inputFiscalCode)
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList()); // or .toList() for Java 16+
+ */
+//        result = users.keySet().stream()
+//                .filter(key -> key.getId() == inputFiscalCode);
+//
+//        Optional<String> optionalUser = users.entrySet().stream()
+//                .filter(key -> key.getKey().getId() == inputFiscalCode)
+//                .findFirst().
+//
+//        if (userDataFromDB.isEmpty()) {
+//            System.err.println("No data found");
+//            //throw new SpecificException("No data found with the given details");
+//        }
