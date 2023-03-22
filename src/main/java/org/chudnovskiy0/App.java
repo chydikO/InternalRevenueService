@@ -9,7 +9,7 @@ import java.util.*;
  * +1. Полная распечатка базы данных.
  * +2. Распечатка данных по конкретному коду.
  * +3. Распечатка данных по конкретному типу штрафа.
- * 4. Распечатка данных по конкретному городу.
+ * +4. Распечатка данных по конкретному городу.
  * +5. Добавление нового человека с информацией о нем.
  * +6. Добавление новых штрафов для уже существующей записи.
  * +7. Удаление штрафа.
@@ -92,9 +92,24 @@ public class App {
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.GET_BY_FINE.label.length())));
     }
 
+    // 4. Распечатка данных по конкретному городу.
     private static void getByCity() {
         System.out.println(menuTitle(Menu.GET_BY_CITY.label));
-
+        City city = getCityByIndex();
+        Map<FiscalCode, UserData> usersFromCity = null;
+        if (cites.contains(city)) {
+            usersFromCity = new HashMap<>();
+            for (Map.Entry<FiscalCode, UserData> entry : users.entrySet()) {
+                if (entry.getValue().getCity() == city) {
+                    usersFromCity.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        if (usersFromCity == null) {
+            System.out.println("По городу: " + city + " штрафов не найдено");
+        } else {
+            printUsers(usersFromCity);
+        }
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.GET_BY_CITY.label.length())));
     }
 
