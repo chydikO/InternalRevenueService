@@ -12,7 +12,7 @@ import java.util.*;
  * 4. Распечатка данных по конкретному городу.
  * +5. Добавление нового человека с информацией о нем.
  * +6. Добавление новых штрафов для уже существующей записи.
- * 7. Удаление штрафа.
+ * +7. Удаление штрафа.
  * 8. Замена информации о человеке и его штрафах.
  */
 public class App {
@@ -143,13 +143,28 @@ public class App {
         } else {
             System.out.println("нет такого пользователя");
         }
-
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.UPDATE_RECORD.label.length())));
     }
 
+    //7. Удаление штрафа.
     private static void deleteFine() {
         System.out.println(menuTitle(Menu.DELETE_FINE.label));
+        UserData userData = getUserByFiscalCode();
+        if (userData != null) {
+            System.out.println("-=??? Удалить штрафы для пользователя ???=-");
+            System.out.println("-=??? Y - да, любая буква - НЕТ ???=-");
 
+            if (scanner.nextLine().equals("Y".toLowerCase())) {
+                Set<Fine> fineSet = getFinesFromConsole();
+                if (userData.getFineDataSet().removeAll(fineSet)) {
+                    System.out.println("Штрафы удалены");
+                } else {
+                    System.out.println("!!! Штрафы НЕ добавлены !!!");
+                }
+            }
+        } else {
+            System.out.println("нет такого пользователя");
+        }
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.DELETE_FINE.label.length())));
     }
 
