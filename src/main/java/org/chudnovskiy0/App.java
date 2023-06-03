@@ -10,7 +10,7 @@ import java.util.stream.Stream;
  * +1. Полная распечатка базы данных.
  * +2. Распечатка данных по конкретному коду.
  * +3. Распечатка данных по конкретному типу штрафа.
- * 4. Распечатка данных по конкретному городу.
+ * +4. Распечатка данных по конкретному городу.
  * +5. Добавление нового человека с информацией о нем.
  * +6. Добавление новых штрафов для уже существующей записи.
  * 7. Удаление штрафа.
@@ -104,7 +104,7 @@ public class App {
         System.out.println(menuTitle(Menu.GET_BY_CITY.label));
         Map<FiscalCode, UserData> usersData = getUsersByCity();
         if (usersData != null) {
-            //TODO: print Map<FiscalCode, UserData> usersData
+            //TODO: print Map<FiscalCode, UserData> usersData with format
             usersData.forEach((key, value) -> System.out.println(key.getId() + " : " + value.toString()));
         } else {
             System.out.println("в городе: нет штрафов");
@@ -117,15 +117,15 @@ public class App {
         Map<FiscalCode, UserData> usersByCity = new HashMap<>();
         for (UserData userData: users.values()) {
             if (userData.getCity() == inputCity) {
-                FiscalCode userFiscalCode = getKeyByValue(users, userData);
+                FiscalCode userFiscalCode = getKeyByValue(userData);
                 usersByCity.put(userFiscalCode, userData);
             }
         }
         return usersByCity;
     }
 
-    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
-        return map.entrySet()
+    public static FiscalCode getKeyByValue(UserData value) {
+        return users.entrySet()
                 .stream()
                 .filter(entry -> Objects.equals(entry.getValue(), value))
                 .map(Map.Entry::getKey)
@@ -176,7 +176,6 @@ public class App {
         } else {
             System.out.println("нет такого пользователя");
         }
-
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.UPDATE_RECORD.label.length())));
     }
 
