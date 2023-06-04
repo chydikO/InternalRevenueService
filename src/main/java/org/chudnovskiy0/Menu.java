@@ -8,7 +8,7 @@ public enum Menu {
     ADD_NEW_USER("5. Добавление нового человека с информацией о нем."),
     UPDATE_RECORD("6. Добавление новых штрафов для уже существующей записи."),
     DELETE_FINE("7. Удаление штрафа."),
-    REPLACING_PERSON_INFORMATION("8. Замена информации о человеке и его штрафах."),
+    REPLACING_PERSON_INFORMATION("8. Замена информации о человеке."),
     EXIT("9. Выход.");
 
     public final String label;

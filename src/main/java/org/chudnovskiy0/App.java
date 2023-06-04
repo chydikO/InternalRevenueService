@@ -13,7 +13,7 @@ import java.util.*;
  * +5. Добавление нового человека с информацией о нем.
  * +6. Добавление новых штрафов для уже существующей записи.
  * +7. Удаление штрафа.
- * 8. Замена информации о человеке и его штрафах.
+ * +8. Замена информации о человеке и его штрафах.
  */
 public class App {
     private static final Scanner scanner = new Scanner(System.in);
@@ -57,7 +57,7 @@ public class App {
         return option;
     }
 
-    //TODO:8. Замена информации о человеке и его штрафах.
+    //TODO:8. Замена информации о человеке.
     private static void replacingPersonInformation() {
         System.out.println(menuTitle(Menu.REPLACING_PERSON_INFORMATION.label));
         System.out.println("-=??? Введите ID пользователя ???=-");
@@ -68,9 +68,48 @@ public class App {
 
     private static void editUserInformation(UserData userData) {
         //TODO: edit FIO, City -> userDate
+        final MenuUSerData[] menuUserData = MenuUSerData.values();
+        int option = 1;
+        do {
+            for (MenuUSerData value : menuUserData) {
+                System.out.println(value.label);
+            }
+            try {
+                initCity();
+                option = scanner.nextInt();
+                scanner.nextLine();  // Consume newline left-over
 
+                switch (option) {
+                    case 1 -> editName(userData);
+                    case 2 -> editSoname(userData);
+                    case 3 -> editCity(userData);
+                    case 4 -> {
+                        break;
+                    }
+                }
+            } catch (Exception ex) {
+                System.out.println("Пожалуйста сделайте свой выбор от 1 до " + menuUserData.length);
+                scanner.next();
+            }
+        } while (option > menuUserData.length || option < 1);
     }
 
+    private static void editCity(UserData userData) {
+        System.out.println("Введите новый город пользователя:\t");
+        userData.setCity(getCityByIndex());
+    }
+
+    private static void editSoname(UserData userData) {
+        System.out.print("Введите новую фамилию :\t");
+        String soname = scanner.nextLine();
+        userData.setFio(new FIO(userData.getFio().getName(), soname));
+    }
+
+    private static void editName(UserData userData) {
+        System.out.print("Введите новое имя:\t");
+        String name = scanner.nextLine();
+        userData.setFio(new FIO(name, userData.getFio().getSoname()));
+    }
 
     private static void getByCode() {
         System.out.println(menuTitle(Menu.GET_BY_CODE.label));
