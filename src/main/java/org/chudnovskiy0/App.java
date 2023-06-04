@@ -12,7 +12,7 @@ import java.util.*;
  * +4. Распечатка данных по конкретному городу.
  * +5. Добавление нового человека с информацией о нем.
  * +6. Добавление новых штрафов для уже существующей записи.
- * 7. Удаление штрафа.
+ * +7. Удаление штрафа.
  * 8. Замена информации о человеке и его штрафах.
  */
 public class App {
@@ -59,6 +59,15 @@ public class App {
 
     //TODO:8. Замена информации о человеке и его штрафах.
     private static void replacingPersonInformation() {
+        System.out.println(menuTitle(Menu.REPLACING_PERSON_INFORMATION.label));
+        System.out.println("-=??? Введите ID пользователя ???=-");
+        UserData userData;
+        if ((userData = getUserByFiscalCode()) != null) editUserInformation(userData);
+        System.out.println(menuTitle(Menu.REPLACING_PERSON_INFORMATION.label));
+    }
+
+    private static void editUserInformation(UserData userData) {
+        //TODO: edit FIO, City -> userDate
 
     }
 
