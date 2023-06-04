@@ -2,9 +2,7 @@ package org.chudnovskiy0;
 
 import lombok.*;
 
-import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 
@@ -28,18 +26,19 @@ public class UserData {
         return false;
     }
 
-    public boolean deleteFine(FineData fine) {
+    public void deleteFine(String fineID) {
+        Fine fine;
+        fine = fineDataSet.stream().filter(e -> e.getId().equals(fineID)).findFirst().orElse(null);
         if (fineDataSet.remove(fine)) {
             System.out.println(" Штраф " + fine + " удален ");
-            return true;
+        } else {
+            System.out.println(" Штраф не существует");
         }
-        System.out.println(" Штраф " + fine + " не существует");
-        return false;
     }
 
     public void printAllFineDataSet() {
         System.out.println(" $$$$$$ Список штрафов $$$$$$");
-        fineDataSet.stream().forEach((Consumer<? super Fine>) System.out::println);
+        fineDataSet.forEach((Consumer<? super Fine>) System.out::println);
         System.out.println(" $$$$$$");
     }
 

@@ -1,7 +1,6 @@
 package org.chudnovskiy0;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * Реализовать базу данных налоговой инспекции по штрафам. Идентифицировать конкретного человека будет
@@ -183,14 +182,18 @@ public class App {
     private static void deleteFine() {
         System.out.println(menuTitle(Menu.DELETE_FINE.label));
         System.out.println("-=??? Введите ID пользователя ???=-");
-        System.out.println("-=??? Y - да, любая буква - НЕТ ???=-");
-
-        if (scanner.nextLine().equals("Y".toLowerCase())) {
-
-        } else {
-        }
-
+        UserData userData;
+        if ((userData = getUserByFiscalCode()) != null) deleteUserFine(userData);
         System.out.println(menuTitle(MENU_SEPARATOR.repeat(Menu.DELETE_FINE.label.length())));
+    }
+
+    private static void deleteUserFine(UserData userData) {
+        System.out.println(userData.toString());
+        userData.printAllFineDataSet();
+        //TODO: input ID fiscal code
+        System.out.println("-=??? Введите ID штрафа ???=-");
+        String inputFineID = scanner.nextLine();
+        userData.deleteFine(inputFineID);
     }
 
     private static void printUsers(Map<FiscalCode, UserData> users) {
